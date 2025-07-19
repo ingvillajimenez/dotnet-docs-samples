@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main
+    workflow_dispatch:
 
 env:
     PROJECT_ID: cf-backend-avanzado-gh-actions
@@ -26,14 +27,14 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             #
             # Authenticate to Google Cloud using workload identity federation
             #
             - id: "auth"
               name: "Obtain access token by using workload identity federation"
-              uses: "google-github-actions/auth@v0"
+              uses: "google-github-actions/auth@v2"
               with:
                   create_credentials_file: true
                   token_format: access_token
@@ -45,7 +46,7 @@ jobs:
                   echo ${{ steps.auth.outputs.access_token }} | docker login -u oauth2accesstoken --password-stdin https://${{ env.REPOSITORY_REGION }}-docker.pkg.dev
 
             - name: Connect to GKE
-              uses: google-github-actions/get-gke-credentials@v0
+              uses: google-github-actions/get-gke-credentials@v2
               with:
                   cluster_name: ${{ env.CLUSTER }}
                   location: ${{ env.CLUSTER_ZONE }}
